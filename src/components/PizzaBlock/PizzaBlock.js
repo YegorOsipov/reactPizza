@@ -1,32 +1,40 @@
 import {useState} from "react";
 
-export const PizzaBlock = ({title, price, img, sizes}) => {
+export const PizzaBlock = ({title, price, imageUrl, sizes, types}) => {
     const [pizzaCount, setPizzaCount] = useState(0)
     const addPizzaHandler = () => setPizzaCount(pizzaCount + 1)
-    const [activeIndex, setActiveIndex] = useState(0)
-    const onClickSize = (i) => {
-        setActiveIndex(i)
-    }
+
+    const [activeSize, setActiveSize] = useState(0)
+    const onClickSize = (i) => setActiveSize(i)
+
+    const [activeType, setActiveType] = useState(0)
+    const onClickType = (i) => setActiveType(i)
+
+    // const typeName = ["тонкое", "традиционное"]
 
     return (
         <div className="pizza-block">
             <img
                 className="pizza-block__image"
-                src={img}
+                src={imageUrl}
                 alt="Pizza"
             />
             <h4 className="pizza-block__title">{title}</h4>
             <div className="pizza-block__selector">
                 <ul>
-                    <li className="active">тонкое</li>
-                    <li>традиционное</li>
+                    {
+                        types.map((type, i) =>
+                            <li key={i}
+                                className={activeType === i ? "active" : ""}
+                                onClick={() => onClickType(i)}>
+                                {type === 0 ? "тонкое" : "традиционное"}
+                            </li>)
+                    }
                 </ul>
                 <ul>
-                    {/*<li className="active">26 см.</li>*/}
-                    {/*<li>30 см.</li>*/}
-                    {/*<li>40 см.</li>*/}
                     {
-                        sizes.map((size, i) => <li key={i} onClick={() => onClickSize(i)} className={activeIndex === i ? "active" : ''}>{size}</li>)
+                        sizes.map((size, i) => <li key={i} onClick={() => onClickSize(i)}
+                                                   className={activeSize === i ? "active" : ''}>{size}</li>)
                     }
                 </ul>
             </div>
