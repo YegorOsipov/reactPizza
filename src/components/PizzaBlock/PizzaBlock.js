@@ -10,8 +10,6 @@ export const PizzaBlock = ({title, price, imageUrl, sizes, types}) => {
     const [activeType, setActiveType] = useState(0)
     const onClickType = (i) => setActiveType(i)
 
-    // const typeName = ["тонкое", "традиционное"]
-
     return (
         <div className="pizza-block">
             <img
