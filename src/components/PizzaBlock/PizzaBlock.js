@@ -1,14 +1,18 @@
 import {useState} from "react";
 
-export const PizzaBlock = ({title, price}) => {
+export const PizzaBlock = ({title, price, img, sizes}) => {
     const [pizzaCount, setPizzaCount] = useState(0)
     const addPizzaHandler = () => setPizzaCount(pizzaCount + 1)
+    const [activeIndex, setActiveIndex] = useState(0)
+    const onClickSize = (i) => {
+        setActiveIndex(i)
+    }
 
     return (
         <div className="pizza-block">
             <img
                 className="pizza-block__image"
-                src="https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
+                src={img}
                 alt="Pizza"
             />
             <h4 className="pizza-block__title">{title}</h4>
@@ -18,9 +22,12 @@ export const PizzaBlock = ({title, price}) => {
                     <li>традиционное</li>
                 </ul>
                 <ul>
-                    <li className="active">26 см.</li>
-                    <li>30 см.</li>
-                    <li>40 см.</li>
+                    {/*<li className="active">26 см.</li>*/}
+                    {/*<li>30 см.</li>*/}
+                    {/*<li>40 см.</li>*/}
+                    {
+                        sizes.map((size, i) => <li key={i} onClick={() => onClickSize(i)} className={activeIndex === i ? "active" : ''}>{size}</li>)
+                    }
                 </ul>
             </div>
             <div className="pizza-block__bottom">
