@@ -4,12 +4,13 @@ import {Sort} from "./components/Sort/Sort";
 import {Categories} from "./components/Categories/Categories";
 import {PizzaBlock} from "./components/PizzaBlock/PizzaBlock";
 import {memo, useEffect, useState} from "react";
+import PizzaSkeleton from "./components/PizzaBlock/PizzaSkeleton";
 
 const App = memo(() =>  {
     const [pizzas, setPizzas] = useState([])
 
     useEffect(() => {
-        debugger
+
         fetch("https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items")
             .then(res => {
                 return res.json()
