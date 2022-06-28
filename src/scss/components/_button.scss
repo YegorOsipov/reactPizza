@@ -93,6 +93,10 @@
     background-color: rgba(255, 255, 255, 0.25);
     margin-left: 14px;
     margin-right: 14px;
+
+    @media (max-width: 550px) {
+      display: none;
+    }
   }
 
   &--add {
@@ -138,11 +142,25 @@
     svg {
       margin-right: 8px;
       margin-bottom: 1px;
+
+      @media (max-width: 550px) {
+        margin: 0;
+      }
+    }
+
+    span {
+      @media (max-width: 550px) {
+        display: none;
+      }
     }
 
     span {
       font-weight: 600;
       font-size: 16px;
+    }
+
+    @media (max-width: 550px) {
+      justify-content: center;
     }
   }
 }
