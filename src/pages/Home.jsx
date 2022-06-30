@@ -9,10 +9,19 @@ const Home = () => {
     const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [categoryId, setCategoryId] = useState(0)
+    const [sortId, setSortId] = useState({
+        name: "популярности",
+        sortProperty: "rating"
+    })
 
     useEffect(() => {
         setIsLoading(true)
-        fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?category=${categoryId === 0 ? "" : categoryId}`)
+
+        const category = categoryId > 0 ? `category=${categoryId}` : ""
+        const sortBy = sortId.sortProperty.replace("-", "")
+        const order = sortId.sortProperty.includes("-") ? "asc" : "desc"
+
+        fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?${category}&sortBy=${sortBy}&order=${order}`)
             .then(res => {
                 return res.json()
             })
@@ -21,13 +30,13 @@ const Home = () => {
                 setIsLoading(false)
             })
         window.scroll(0, 0)
-    }, [categoryId])
+    }, [categoryId, sortId])
 
     return (
         <div className="container">
             <div className="content__top">
                 <Categories value={categoryId} onClickCategory={(index) => setCategoryId(index)}/>
-                <Sort/>
+                <Sort value={sortId} onChangeSort={(index) => setSortId(index)}/>
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">

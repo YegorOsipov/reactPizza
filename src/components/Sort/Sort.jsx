@@ -1,14 +1,20 @@
 import {useState} from "react";
 
-export const Sort = () => {
-    const lists = ["популярности", "цене", "алфавиту"]
+export const Sort = ({value, onChangeSort}) => {
+    const lists = [
+        {name: "популярности(DESC)", sortProperty: "rating"},
+        {name: "популярности(ASC)", sortProperty: "-rating"},
+        {name: "цене(DESC)", sortProperty: "price"},
+        {name: "цене(ASC)", sortProperty: "-price"},
+        {name: "алфавиту(DESC)", sortProperty: "title"},
+        {name: "алфавиту(ASC)", sortProperty: "-title"},
+    ]
 
     const [isVisible, setIsVisible] = useState(false)
     const onClickSort = () => setIsVisible(!isVisible)
 
-    const [activeList, setActiveList] = useState(0)
     const onClickList = (i) => {
-        setActiveList(i)
+        onChangeSort(i)
         setIsVisible(!isVisible)
     }
 
@@ -28,18 +34,18 @@ export const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={onClickSort}>{lists[activeList]}</span>
+                <span onClick={onClickSort}>{value.name}</span>
             </div>
             {
                 isVisible && <div className="sort__popup">
                     <ul>
                         {
-                            lists.map((list, i) =>
+                            lists.map((el, i) =>
                                 <li key={i}
-                                    onClick={() => onClickList(i)}
-                                    className={activeList === i ? "active" : ""}
+                                    onClick={() => onClickList(el)}
+                                    className={value.sortProperty === el.sortProperty ? "active" : ""}
                                 >
-                                    {list}
+                                    {el.name}
                                 </li>)
                         }
                     </ul>
