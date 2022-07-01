@@ -3,9 +3,10 @@ import {Categories} from "../components/Categories/Categories";
 import {Sort} from "../components/Sort/Sort";
 import PizzaSkeleton from "../components/PizzaBlock/PizzaSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
+import Pagination from "../components/Pagination";
 
 
-const Home = () => {
+const Home = ({searchValue}) => {
     const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [categoryId, setCategoryId] = useState(0)
@@ -13,6 +14,7 @@ const Home = () => {
         name: "популярности",
         sortProperty: "rating"
     })
+    const [page, setPage] = useState(1)
 
     useEffect(() => {
         setIsLoading(true)
@@ -21,7 +23,7 @@ const Home = () => {
         const sortBy = sortId.sortProperty.replace("-", "")
         const order = sortId.sortProperty.includes("-") ? "asc" : "desc"
 
-        fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?${category}&sortBy=${sortBy}&order=${order}`)
+        fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${page}&limit=4&${category}&sortBy=${sortBy}&order=${order}`)
             .then(res => {
                 return res.json()
             })
@@ -30,7 +32,13 @@ const Home = () => {
                 setIsLoading(false)
             })
         window.scroll(0, 0)
-    }, [categoryId, sortId])
+    }, [categoryId, sortId, page])
+
+    const skeletonsMap = [...new Array(6)].map((_, i) => <PizzaSkeleton key={i}/>)
+    const pizzasMap =
+        pizzas
+        .filter(f => f.title.toLowerCase().includes(searchValue.toLowerCase()))
+        .map(pizza => <PizzaBlock key={pizza.id} {...pizza}/>)
 
     return (
         <div className="container">
@@ -40,12 +48,9 @@ const Home = () => {
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
-                {
-                    isLoading
-                        ? [...new Array(6)].map((_, i) => <PizzaSkeleton key={i}/>)
-                        : pizzas.map(pizza => <PizzaBlock key={pizza.id} {...pizza}/>)
-                }
+                { isLoading ? skeletonsMap : pizzasMap }
             </div>
+            <Pagination onChangePage={(num) => setPage(num)}/>
         </div>
     );
 };

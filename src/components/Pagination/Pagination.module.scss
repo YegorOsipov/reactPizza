@@ -1,0 +1,52 @@
+.root {
+  li {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    .selected {
+      background-color: #fe5f1e;
+      color: #ffffff;
+    }
+
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 10px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #fe5f1e;
+      border-radius: 30px;
+      cursor: pointer;
+      color: #fe5f1e;
+
+
+      &:hover {
+        background-color: #fe5f1e;
+        color: #ffffff;
+      }
+    }
+  }
+
+  :global {
+    .selected {
+      a {
+        background-color: #fe5f1e;
+        color: #ffffff;
+      }
+    }
+
+    .disabled {
+      a {
+        border: 1px solid #b6b6b6;
+        cursor: default;
+        color: #b6b6b6;
+        &:hover {
+          background-color: #ffffff;
+          color: #b6b6b6;
+        }
+      }
+    }
+  }
+}
