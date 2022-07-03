@@ -5,25 +5,24 @@ import PizzaSkeleton from "../components/PizzaBlock/PizzaSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
 import Pagination from "../components/Pagination";
 import {SearchContext} from "../App";
+import {useSelector} from "react-redux";
 
 
 const Home = () => {
+    const {categoryId, sort} = useSelector(state => state.filter)
+
+
     const {searchValue} = useContext(SearchContext)
     const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [categoryId, setCategoryId] = useState(0)
-    const [sortId, setSortId] = useState({
-        name: "популярности",
-        sortProperty: "rating"
-    })
     const [page, setPage] = useState(1)
 
     useEffect(() => {
         setIsLoading(true)
 
         const category = categoryId > 0 ? `category=${categoryId}` : ""
-        const sortBy = sortId.sortProperty.replace("-", "")
-        const order = sortId.sortProperty.includes("-") ? "asc" : "desc"
+        const sortBy = sort.sortProperty.replace("-", "")
+        const order = sort.sortProperty.includes("-") ? "asc" : "desc"
 
         fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${page}&limit=4&${category}&sortBy=${sortBy}&order=${order}`)
             .then(res => {
@@ -34,7 +33,7 @@ const Home = () => {
                 setIsLoading(false)
             })
         window.scroll(0, 0)
-    }, [categoryId, sortId, page])
+    }, [categoryId, sort.sortProperty, page])
 
     const skeletonsMap = [...new Array(6)].map((_, i) => <PizzaSkeleton key={i}/>)
     const pizzasMap =
@@ -45,8 +44,8 @@ const Home = () => {
     return (
         <div className="container">
             <div className="content__top">
-                <Categories value={categoryId} onClickCategory={(index) => setCategoryId(index)}/>
-                <Sort value={sortId} onChangeSort={(index) => setSortId(index)}/>
+                <Categories />
+                <Sort/>
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
