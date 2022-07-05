@@ -1,4 +1,4 @@
-import filterReducer, {changeCategory, changeSortValue} from "../filterSlice";
+import filterReducer, {changeCategory, changeCurrentPage, changeSortValue} from "../filterSlice";
 
 let startState
 
@@ -9,6 +9,7 @@ beforeEach(() => {
             name: "популярности",
             sortProperty: "rating",
         },
+        currentPage: 0,
     }
 })
 
@@ -24,4 +25,11 @@ test("sort value should be change", () => {
     const endState = filterReducer(startState, changeSortValue(newValue))
 
     expect(endState.sort.sortProperty).toBe(newValue)
+})
+
+test("number page should be change", () => {
+    const newValue = 2
+    const endState = filterReducer(startState, changeCurrentPage(newValue))
+
+    expect(endState.currentPage).toBe(newValue)
 })

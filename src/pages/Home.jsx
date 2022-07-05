@@ -5,17 +5,19 @@ import PizzaSkeleton from "../components/PizzaBlock/PizzaSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
 import Pagination from "../components/Pagination";
 import {SearchContext} from "../App";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import axios from "axios";
+import {changeCurrentPage} from "../redux/slices/filterSlice";
 
 
 const Home = () => {
-    const {categoryId, sort} = useSelector(state => state.filter)
-
-
+    const {categoryId, sort, currentPage} = useSelector(state => state.filter)
+    const dispatch = useDispatch()
     const {searchValue} = useContext(SearchContext)
     const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [page, setPage] = useState(1)
+    // const [page, setPage] = useState(1)
+    const onChangeCurrentPage = (num) => dispatch(changeCurrentPage(num))
 
     useEffect(() => {
         setIsLoading(true)
@@ -23,17 +25,16 @@ const Home = () => {
         const category = categoryId > 0 ? `category=${categoryId}` : ""
         const sortBy = sort.sortProperty.replace("-", "")
         const order = sort.sortProperty.includes("-") ? "asc" : "desc"
+        const search = searchValue ? `&search=${searchValue}` : ""
 
-        fetch(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${page}&limit=4&${category}&sortBy=${sortBy}&order=${order}`)
+        axios.get(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
             .then(res => {
-                return res.json()
-            })
-            .then(res => {
-                setPizzas(res)
+                setPizzas(res.data)
                 setIsLoading(false)
             })
+
         window.scroll(0, 0)
-    }, [categoryId, sort.sortProperty, page])
+    }, [categoryId, sort.sortProperty, currentPage, searchValue])
 
     const skeletonsMap = [...new Array(6)].map((_, i) => <PizzaSkeleton key={i}/>)
     const pizzasMap =
@@ -51,7 +52,7 @@ const Home = () => {
             <div className="content__items">
                 { isLoading ? skeletonsMap : pizzasMap }
             </div>
-            <Pagination onChangePage={(num) => setPage(num)}/>
+            <Pagination currentPage={currentPage} onChangePage={onChangeCurrentPage}/>
         </div>
     );
 };

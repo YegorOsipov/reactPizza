@@ -12,7 +12,7 @@ const MyLoader = (props) => (
         foregroundColor="#ecebeb"
         {...props}
     >
-        <circle cx="136" cy="132" r="125" />
+        <circle cx="125" cy="132" r="125" />
         <rect x="2" y="416" rx="10" ry="10" width="91" height="45" />
         <rect x="142" y="58" rx="0" ry="0" width="6" height="44" />
         <rect x="128" y="416" rx="25" ry="25" width="150" height="45" />

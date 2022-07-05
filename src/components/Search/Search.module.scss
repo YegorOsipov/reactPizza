@@ -14,11 +14,15 @@
   }
 }
 
-.icon {
+.icon, .iconX {
   position: absolute;
   top: 8px;
   right: 20px;
   width: 25px;
   height: 25px;
   opacity: 0.6;
+}
+
+.iconX {
+  cursor: pointer;
 }
