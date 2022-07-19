@@ -1,25 +1,30 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Categories} from "../components/Categories/Categories";
-import {Sort} from "../components/Sort/Sort";
+import {lists, Sort} from "../components/Sort/Sort";
 import PizzaSkeleton from "../components/PizzaBlock/PizzaSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
 import Pagination from "../components/Pagination";
 import {SearchContext} from "../App";
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
-import {changeCurrentPage} from "../redux/slices/filterSlice";
+import {changeCurrentPage, setFilters} from "../redux/slices/filterSlice";
+import qs from "qs";
+import {useNavigate} from 'react-router-dom'
 
 
 const Home = () => {
     const {categoryId, sort, currentPage} = useSelector(state => state.filter)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const {searchValue} = useContext(SearchContext)
     const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const isSearch = useRef(false)
+    const isMounted = useRef(false)
     // const [page, setPage] = useState(1)
     const onChangeCurrentPage = (num) => dispatch(changeCurrentPage(num))
 
-    useEffect(() => {
+    const fetchPizzas = () => {
         setIsLoading(true)
 
         const category = categoryId > 0 ? `category=${categoryId}` : ""
@@ -33,10 +38,45 @@ const Home = () => {
                 setIsLoading(false)
             })
 
+    }
+
+    //Если был первый рендер, то проверяй URL-параметры и сохраняем в редаксе
+    useEffect(() => {
+        if (window.location.search) {
+            const params = qs.parse(window.location.search.substring(1))
+            const sort = lists.find(obj => obj.sortProperty === params.sortProperty)
+            dispatch(
+                setFilters({...params, sort})
+            )
+            isSearch.current = true
+        }
+    }, [])
+
+    //Если был первый рендер, то запрашиваем пиццы
+
+    useEffect(() => {
         window.scroll(0, 0)
+        if (!isSearch.current) {
+            fetchPizzas()
+        }
+
+        isSearch.current = false
     }, [categoryId, sort.sortProperty, currentPage, searchValue])
 
-    const skeletonsMap = [...new Array(6)].map((_, i) => <PizzaSkeleton key={i}/>)
+    //Если изменили параметры и был первый рендер
+    useEffect(() => {
+        if (isMounted.current) {
+            const queryString = qs.stringify({
+                sortProperty: sort.sortProperty,
+                categoryId,
+                currentPage
+            })
+            navigate(`?${queryString}`)
+        }
+        isMounted.current = true
+    }, [categoryId, sort.sortProperty, currentPage, searchValue])
+
+    const skeletonsMap = [...new Array(4)].map((_, i) => <PizzaSkeleton key={i}/>)
     const pizzasMap =
         pizzas
         .filter(f => f.title.toLowerCase().includes(searchValue.toLowerCase()))

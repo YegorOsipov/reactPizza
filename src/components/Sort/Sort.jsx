@@ -2,18 +2,18 @@ import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {changeSortValue} from "../../redux/slices/filterSlice";
 
+export const lists = [
+    {name: "популярности(DESC)", sortProperty: "rating"},
+    {name: "популярности(ASC)", sortProperty: "-rating"},
+    {name: "цене(DESC)", sortProperty: "price"},
+    {name: "цене(ASC)", sortProperty: "-price"},
+    {name: "алфавиту(DESC)", sortProperty: "title"},
+    {name: "алфавиту(ASC)", sortProperty: "-title"},
+]
+
 export const Sort = () => {
     const sort = useSelector(state => state.filter.sort)
     const dispatch = useDispatch()
-
-    const lists = [
-        {name: "популярности(DESC)", sortProperty: "rating"},
-        {name: "популярности(ASC)", sortProperty: "-rating"},
-        {name: "цене(DESC)", sortProperty: "price"},
-        {name: "цене(ASC)", sortProperty: "-price"},
-        {name: "алфавиту(DESC)", sortProperty: "title"},
-        {name: "алфавиту(ASC)", sortProperty: "-title"},
-    ]
 
     const [isVisible, setIsVisible] = useState(false)
     const onClickSort = () => setIsVisible(!isVisible)
