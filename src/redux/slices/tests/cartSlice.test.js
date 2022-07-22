@@ -1,49 +1,70 @@
-import filterReducer, {changeCategory, changeCurrentPage, changeSortValue, setFilters} from "../filterSlice";
+import cartReducer, {addItem, clearItems, removeItem} from "../cartSlice";
 
 let startState
 
 beforeEach(() => {
     startState = {
-        categoryId: 0,
-        sort: {
-            name: "популярности",
-            sortProperty: "rating",
-        },
-        currentPage: 0,
+        totalPrice: 0,
+        items: [
+            {
+                "id": 0,
+                "imageUrl": "https://dodopizza.azureedge.net/static/Img/Products/f035c7f46c0844069722f2bb3ee9f113_584x584.jpeg",
+                "title": "Пепперони Фреш с перцем",
+                "types": [0, 1],
+                "sizes": [26, 30, 40],
+                "price": 803,
+                "category": 0,
+                "rating": 4
+            },
+            {
+                "id": 1,
+                "imageUrl": "https://dodopizza.azureedge.net/static/Img/Products/Pizza/ru-RU/2ffc31bb-132c-4c99-b894-53f7107a1441.jpg",
+                "title": "Сырная",
+                "types": [0],
+                "sizes": [26, 40],
+                "price": 245,
+                "category": 0,
+                "rating": 6
+            }, {
+                "id": 2,
+                "imageUrl": "https://dodopizza.azureedge.net/static/Img/Products/Pizza/ru-RU/6652fec1-04df-49d8-8744-232f1032c44b.jpg",
+                "title": "Цыпленок барбекю",
+                "types": [0],
+                "sizes": [26, 40],
+                "price": 295,
+                "category": 1,
+                "rating": 4
+            },],
     }
 })
 
-test("check changing pizzas category", () => {
-    const newCategory = 2
-    const endState = filterReducer(startState, changeCategory(newCategory))
+test("array items and total price should be change", () => {
+    const newItem = {
+        "id": 6,
+        "imageUrl": "https://dodopizza.azureedge.net/static/Img/Products/f035c7f46c0844069722f2bb3ee9f113_584x584.jpeg",
+        "title": "Пепперони Фреш с перцем",
+        "types": [0, 1],
+        "sizes": [26, 30, 40],
+        "price": 803,
+        "category": 0,
+        "rating": 4
+    }
+    const endState = cartReducer(startState, addItem(newItem))
 
-    expect(endState.categoryId).toBe(newCategory)
+    expect(endState.items.length).toBe(4)
+    expect(endState.items[endState.items.length - 1].id).toBe(newItem.id)
+    expect(endState.totalPrice).toBe(endState.items[0].price + endState.items[1].price + endState.items[2].price + endState.items[3].price)
 })
 
-test("sort value should be change", () => {
-    const newValue = "title"
-    const endState = filterReducer(startState, changeSortValue(newValue))
+test("element of array items should be delete", () => {
+    const endState = cartReducer(startState, removeItem(startState.items[2].id))
 
-    expect(endState.sort.sortProperty).toBe(newValue)
+    expect(endState.items.length).toBe(2)
+    expect(endState.items[2]).toBeUndefined()
 })
 
-test("number page should be change", () => {
-    const newValue = 2
-    const endState = filterReducer(startState, changeCurrentPage(newValue))
+test("array items should be clear", () => {
+    const endState = cartReducer(startState, clearItems())
 
-    expect(endState.currentPage).toBe(newValue)
-})
-
-test("object should be change", () => {
-    const endState = filterReducer(startState, setFilters({
-        categoryId: 2,
-        sort: {
-            name: "алфавиту",
-            sortProperty: "title",
-        },
-        currentPage: 1,
-    }))
-    expect(endState.categoryId).toBe(2)
-    expect(endState.sort.name).toBe("алфавиту")
-    expect(endState.currentPage).toBe(1)
+    expect(endState.items.length).toBe(0)
 })
