@@ -6,7 +6,7 @@ export const CartItem = ({id, title, count, price, imageUrl, type, size}) => {
     const dispatch = useDispatch()
 
     const onClickPlus = () => dispatch(addItem({id,}))
-    const onClickMinus = () => dispatch(minusItem(id))
+    const onClickMinus = () => dispatch(minusItem({id, price}))
     const removeItemCount = () => dispatch(removeItem(id))
     const onClickRemoveItem = () => {
         if (window.confirm("Вы действительно хотите удалить товар?")) {

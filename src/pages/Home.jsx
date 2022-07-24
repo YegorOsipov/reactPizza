@@ -10,21 +10,23 @@ import axios from "axios";
 import {changeCurrentPage, setFilters} from "../redux/slices/filterSlice";
 import qs from "qs";
 import {useNavigate} from 'react-router-dom'
+import {setPizzas} from "../redux/slices/pizzaSlice";
 
 
 const Home = () => {
     const {categoryId, sort, currentPage} = useSelector(state => state.filter)
+    const pizzas = useSelector(state => state.pizza)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const {searchValue} = useContext(SearchContext)
-    const [pizzas, setPizzas] = useState([])
+    // const [pizzas, setPizzas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const isSearch = useRef(false)
     const isMounted = useRef(false)
     // const [page, setPage] = useState(1)
     const onChangeCurrentPage = (num) => dispatch(changeCurrentPage(num))
 
-    const fetchPizzas = () => {
+    const fetchPizzas = async () => {
         setIsLoading(true)
 
         const category = categoryId > 0 ? `category=${categoryId}` : ""
@@ -32,11 +34,14 @@ const Home = () => {
         const order = sort.sortProperty.includes("-") ? "asc" : "desc"
         const search = searchValue ? `&search=${searchValue}` : ""
 
-        axios.get(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
-            .then(res => {
-                setPizzas(res.data)
-                setIsLoading(false)
-            })
+        try {
+            const res = await axios.get(`https://62b767e2691dcea2733e5c53.mockapi.io/reactPizza/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
+            dispatch(setPizzas(res.data))
+        } catch (error) {
+            alert("ошибка при получении данных")
+        } finally {
+            setIsLoading(false)
+        }
 
     }
 
@@ -77,20 +82,19 @@ const Home = () => {
     }, [categoryId, sort.sortProperty, currentPage, searchValue])
 
     const skeletonsMap = [...new Array(4)].map((_, i) => <PizzaSkeleton key={i}/>)
-    const pizzasMap =
-        pizzas
-        .filter(f => f.title.toLowerCase().includes(searchValue.toLowerCase()))
-        .map(pizza => <PizzaBlock key={pizza.id} {...pizza}/>)
+    const pizzasMap = pizzas.items
+            .filter(f => f.title.toLowerCase().includes(searchValue.toLowerCase()))
+            .map(pizza => <PizzaBlock key={pizza.id} {...pizza}/>)
 
     return (
         <div className="container">
             <div className="content__top">
-                <Categories />
+                <Categories/>
                 <Sort/>
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
-                { isLoading ? skeletonsMap : pizzasMap }
+                {isLoading ? skeletonsMap : pizzasMap}
             </div>
             <Pagination currentPage={currentPage} onChangePage={onChangeCurrentPage}/>
         </div>
